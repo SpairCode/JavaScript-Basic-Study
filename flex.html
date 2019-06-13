@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Flex</title>
+</head>
+<style type="text/css">
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+html,body {
+  width: 100%;
+  height: 100%;
+}
+
+.box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  /* flex-flow: column; */
+  flex-wrap: wrap;
+  justify-content: space-between;
+  background-color: aliceblue;
+}
+
+/* .item {
+  width: 375px;
+  height: 375px;
+  background-color: aqua;
+} */
+</style>
+<body>
+  <div class="box">
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+    <div class="item"></div>
+  </div>  
+</body>
+<script type="text/javascript">
+// map
+let arr = [...Array(10).keys()]
+arr.map((item) => {
+  console.log('map', item)
+})
+
+// forEach
+arr.forEach((item) => {
+  console.log('forEach', item)
+})
+
+// reducer
+// reducerRight
+
+// filter
+arr.filter((item) => {
+  if (item > 6) {
+    console.log('filter', item)
+  }
+})
+
+// every() 方法测试一个数组内的所有元素是否都能通过某个指定函数的测试
+// 检测数组中的元素是否都大于50
+function judgeMax (val) {
+  return val > 50
+}
+
+console.log('every', arr.every(judgeMax))
+// 箭头函数检测数组中的元素是否大于-1
+console.log('every', arr.every(x => x > -1))
+
+// some() 方法测试是否至少有一个元素可以通过被提供的函数方法
+</script>
+</html>
