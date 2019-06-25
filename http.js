@@ -17,7 +17,6 @@ server.on('request', (req, res) => {
   let data = [
     {
       code: 200,
-      id: new Date(),
       data: [{
         one: 'one'
       },{
