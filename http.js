@@ -2,7 +2,15 @@
 const http = require('http')
 const fs = require('fs')
 
-// 设置请求头
+
+// text/html  对于一般网页
+// text/plain 对于一般文本
+// text/css 对于级联样式表
+// text/javascript 对于JavaScript
+// application/octet-stream 意味着“下载这个文件”
+// application/x-java-applet 对于 Java applets
+// application/pdf 对于 PDF 文档
+
 const server = http.createServer((req, res) => {
   res.setHeader('Content-Type', 'text/html')
   res.setHeader('Fans', 'THIS')
