@@ -55,6 +55,6 @@ server.on('request', (req, res) => {
 })
 
 // 监听3000 端口
-server.listen(3000, () => {
+server.listen(80, () => {
   console.log('服务器启动成功')
 })
