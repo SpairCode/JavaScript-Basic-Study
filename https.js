@@ -8,32 +8,19 @@ const server = http.createServer((req, res) => {
 let paths = 'G:/WorkSpace/JavaScript-Basic-Study/www/'
 
 server.on('request', (req, res) => {
-  console.log('Url', req.url)
-  if (req.url === '/') {
-    fs.readFile(paths + 'index.html', (err, data) => {
-      if (err) {
-        return res.end('The File Read Failed')
-      } else {
-        return res.end(data)
-      }
-    })
-  } else if (req.url === '/login') {
-    fs.readFile(paths + 'Login.html', (err, data) => {
-      if (err) {
-        return res.end('The File Read Failed')
-      } else {
-        return res.end(data)
-      }
-    })
-  } else {
-    fs.readFile(paths + 'error.html', (err, data) => {
-       if (err) {
-         return res.end('The File Read Failed')
-       } else {
-         return res.end(data)
-       }
-    })
+  let filePath = 'index.html'
+
+  if (req.url !== '/') {
+    filePath = req.url + '.html'
   }
+
+  fs.readFile(paths + filePath, (err, data) => {
+    if (err) {
+      return res.end('The File Read Failed')
+    } else {
+      return res.end(data)
+    }
+  })
 })
 
 server.listen(3000, ()=> {
