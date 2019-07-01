@@ -7,19 +7,8 @@
     <title>Document</title>
 </head>
 <body>
-    
+  <p>Name：  {{ name }}</p>
+  <p>Age: {{ age }}</p>
+  <p>Sex: {{ sex }}</p>
 </body>
-<script type="text/javascript"  src="node_modules/art-template/lib/template-web.js"></script>
-<script type="text/template" id="demo">
-    Name：  {{ name }}
-    Age: {{ age }}
-    Sex: {{ sex }}
-</script>
-<script>
-let res = template('demo', {
-  name: 'Fan',
-  age: 18,
-  sex: 'M'
-})
-</script>
 </html>

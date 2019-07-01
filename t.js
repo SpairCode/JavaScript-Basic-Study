@@ -9,19 +9,19 @@ const server = http.createServer((req, res) => {
 let paths = 'F:/Common/JavaScript-Basic-Study/www/'  // companyPC
 
 server.on('request', (req, res) => {
-  console.log('URL:', req.url)
-  let filePath = 'index.html'
 
-  if (req.url !== '/') {
-    filePath = req.url + '.html'
-  }
-
-  fs.readFile(paths + filePath, (err, data) => {
+  fs.readFile('F:/Common/JavaScript-Basic-Study/template.html', (err, data) => {
     if (err) {
-      console.log('error', err)
       return res.end('The File Read Failed')
     } else {
-      return res.end(data)
+      let template = require('art-template')
+      let html = template.render(data.toString(), {
+        name: 'Fan',
+        age: 18,
+        sex: 'M',
+      })
+      console.log(html)
+      res.end(html)
     }
   })
 })
