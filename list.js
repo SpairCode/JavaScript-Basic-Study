@@ -15,12 +15,12 @@ const List = [{
 
 server.on('request', (req, res) => {
   let URL = req.url
+  console.log('IP', req.socket.localAddress)
   if (path.extname(URL) === '.css') {
     res.setHeader('Content-Type', 'text/css')
   } else {
     res.setHeader('Content-Type', 'text/html')
   }
-  console.log('URL', path.parse(URL).name)
 
   if (URL === '/') {
     fs.readFile('./bbs/list.html', (err, data) => {
