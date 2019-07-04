@@ -9,8 +9,8 @@ const server = http.createServer((req, res) => {
 })
 
 const List = [{
-  name: 'Vivo',
-  message: '你说啥'
+  name: '鲁迅',
+  message: '时间就像海绵,挤一挤还是有的'
 }]
 
 server.on('request', (req, res) => {

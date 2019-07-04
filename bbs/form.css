@@ -40,3 +40,19 @@ body,
   color: #fff;
   background-color: black;
 }
+
+::-webkit-scrollbar-thumb {
+  background-color: #cecece;
+  border: 3px solid transparent;
+  border-radius: 9px;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  background: #cecece;
+}
+
+::-webkit-scrollbar-track {
+  background: #fff;
+}
