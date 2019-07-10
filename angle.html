@@ -1,0 +1,21 @@
+<html>
+<style>
+*{margin:0;padding:0;}
+#triangle-topleft,#triangle-topleft2 {
+    width: 0;
+    height: 0;
+}
+</style>
+<body>
+<div id="triangle-topleft"></div>
+<div id="triangle-topleft2"></div>
+</body>
+<script>
+document.getElementById('triangle-topleft').style="border-top: "+document.body.clientHeight+"px solid red;border-right: "+document.body.clientWidth+"px solid transparent;";
+document.getElementById('triangle-topleft2').style="border-bottom: "+document.body.clientHeight+"px solid #ccc;border-left: "+document.body.clientWidth+"px solid transparent;position:absolute;top:0;";
+window.onresize = function () {
+document.getElementById('triangle-topleft').style="border-top: "+document.body.clientHeight+"px solid red;border-right: "+document.body.clientWidth+"px solid transparent;";
+document.getElementById('triangle-topleft2').style="border-bottom: "+document.body.clientHeight+"px solid #ccc;border-left: "+document.body.clientWidth+"px solid transparent;position:absolute;top:0;";
+}
+</script>
+</html>
