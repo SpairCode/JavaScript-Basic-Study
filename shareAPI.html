@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+  <button id="share"> Share </div>
+</body>
+<script type="text/javascript">
+let shareButton = document.getElementById('share');
+shareButton.addEventListener('click', event => {
+  if (navigator.share) {
+    navigator.share({
+      title: 'WebShare API Demo',
+      url: 'https://codepen.io/ayoisaiah/pen/YbNazJ'
+    }).then(() => {
+      alert('Thanks for sharing!');
+    })
+    .catch(console.error);
+  } else {
+    // fallback
+    alert('Sorry ShareAPI failed')
+  }
+})
+</script>
+</html>
