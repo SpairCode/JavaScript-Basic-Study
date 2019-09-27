@@ -39,8 +39,61 @@
 
 // console.log(a)
 
-// 解构赋值
+// 解构赋值 模式匹配
+
 var [a, b, c] = [1, 2, 3]
+
+var node = {
+  loc: {
+    start: {
+      line: 1,
+      column: 5
+    }
+  }
+}
+
+var { loc: { start: { line, column } } } = node
+
+console.log('line: ', line)
+console.log('column: ', column)
+
+let [head, ...footer] = [1, 2, 3, 4, 5]
+
+var { x = 3 } = { x: null }
+var { y = 4 } = { y: undefined }
+
+// [[1, 2], [3, 4], [5, 6]].map(([a, b]) => a + b)
+
+// function add(x = 3, y = 4) {
+//   return x + y
+// }
+
+// var u = 1
+// var w = 2
+// var [u , w] = [1, 2]
+// [u, w] = [w, u];
+
+let jsonData = {
+  id: 42,
+  status: 'OK',
+  data: [1, 2, 3, 4]
+}
+
+let { id, status, data } = jsonData
+
+console.log(id, status, data)
+
+let str = 'Hello World'
+
+let s = 'A'
+
+console.log(s.padStart(6, 'Fan'))
+console.log(s.padEnd(8, 'La'))
+
+let num = 36.7
+
+// 判断是否为整数
+console.log('Number.isInteger ', Number.isInteger(num))
 
 </script>
 </html>
