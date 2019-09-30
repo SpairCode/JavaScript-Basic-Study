@@ -83,7 +83,7 @@ let { id, status, data } = jsonData
 
 console.log(id, status, data)
 
-let str = 'Hello World'
+// let str = 'Hello World'
 
 let s = 'A'
 
@@ -105,6 +105,29 @@ console.log('-8', Math.sign(-8))
 console.log('0', Math.sign(0))
 console.log('8', Math.sign(8))
 
+// 计算乘积 return a * b
 console.log(Math.imul(5, 5))
+
+// Array.from 也可以作用于深拷贝浅拷贝
+let str = [2, 2, 8, 10]
+let strs = Array.from(str) // 返回一个新的数组
+strs.push(5)
+
+// console.log(Array.from(strs, (x) => x + 1))
+
+// 数组实例 copyWithin()
+
+// find()
+
+// 返回值
+strs.find((value, index, arr) => { // 值，数组坐标位置，数组
+  return value > 3
+})
+
+// 返回下标
+strs.findIndex((value, index, arr) => { // 值，数组坐标位置，数组
+  return value > 3
+})
+
 </script>
 </html>
