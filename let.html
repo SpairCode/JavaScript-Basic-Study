@@ -93,7 +93,18 @@ console.log(s.padEnd(8, 'La'))
 let num = 36.7
 
 // 判断是否为整数
-console.log('Number.isInteger ', Number.isInteger(num))
+console.log('Number.isInteger 判断是否为整数', Number.isInteger(num))
 
+// Number.isSafeInteger()
+
+console.log(Math.trunc(13.37))    // 13
+console.log(Math.floor(13.37))    // 13
+
+// 判断是否为正数负数
+console.log('-8', Math.sign(-8))
+console.log('0', Math.sign(0))
+console.log('8', Math.sign(8))
+
+console.log(Math.imul(5, 5))
 </script>
 </html>
