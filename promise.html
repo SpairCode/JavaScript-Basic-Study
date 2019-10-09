@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Promise</title>
+</head>
+<body>
+    
+</body>
+<script type="text/javascript">
+let promise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('I have been resolve')
+  }, 2000)
+})
+
+promise.then(res => {
+  console.log(res)
+}).catch(res => {
+  console.log('This is error')
+})
+</script>
+</html>

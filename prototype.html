@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Prototype</title>
+</head>
+<body>
+    
+</body>
+<script type="text/javascript">
+function Person() {}
+// 实例对象和构造函数都可以指向原型
+var person = new Person();
+person.name = 'Fancy'
+console.log(person.name)
+
+Person.prototype.age = 18
+
+console.log(person.age)
+
+console.log(person.__proto__ === Person.prototype);
+
+console.log(Person.prototype.constructor)
+
+console.log(Object.getPrototypeOf(person))
+</script>
+</html>
