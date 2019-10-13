@@ -11,7 +11,7 @@
 </body>
 <script type="text/javascript">
 var array = [1, 2, 3, 5, 6, 8, 8, 3, 5, 6, 2, 6, 9, 7, 0]
-
+// 0.06 ~ 0.07
 function unique(array) {
   var res = []
   var sortArray = array.concat().sort()
@@ -23,5 +23,24 @@ function unique(array) {
   }
   return res
 }
+
+// 0.05 ~ 0.06
+function unique(array) {
+    var res = [];
+    // 最关键的一步 按顺序排列该数组,比对相邻的数组元素
+    var sortedArray = array.concat().sort()
+    var seen;
+    for (var i = 0, len = sortedArray.length; i < len; i++) {
+        // 如果是第一个元素或者相邻的元素不相同
+        if (!i || seen !== sortedArray[i]) {
+            res.push(sortedArray[i])
+        }
+        seen = sortedArray[i];
+    }
+    return res;
+}
+console.time()
+console.log(unique(array))
+console.timeEnd()
 </script>
 </html>
