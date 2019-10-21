@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> Array From </title>
+</head>
+<body>
+    
+</body>
+<script type="text/javascript">
+// function processString (str) {
+//   var arr = Array.from(str)
+//   var newarr = arr.map((item) => {
+//     return item === item.toUpperCase() ? item.toLowerCase() : item.toUpperCase()
+//   })
+//   return newarr.join('')
+// }
+
+var arr = new Set([1,2,3,4,5,6])
+var arrs = new Set([4,5,6,7,8,9])
+var conactArr = new Set([...arr].filter(x => arrs.has(x)))
+</script>
+</html>
