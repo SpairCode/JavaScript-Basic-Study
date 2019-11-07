@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Audio Context</title>
+</head>
+<body>
+    <audio controls="controls" id="audio">
+      <source src="./audio.mp3" type="audio/mp3">
+    </audio>
+</body>
+<script type="text/javascript">
+// https://developer.mozilla.org/zh-CN/docs/Web/Events 事件参考
+window.addEventListener('load', function () {
+  // 关联音频输入，对音频进行解码，控制音频播放等基础操作
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  
+  const ctx = new AudioContext();
+  const analyser = ctx.createAnalyser();
+  analyser.fftSize = 512;
+  
+  // 获取 audio 节点
+  const audio = document.getElementById('audio');
+
+  audio.play();
+  
+  console.log('audio', audio)
+  // 创建音频源
+  const source = ctx.createMediaElementSource(audio);
+  
+  source.connect(analyser)
+  
+  analyser.connect(ctx.destination)
+  
+  console.log('ctx', ctx)
+  
+  const bufferLength = analyser.frequencyBinCount;
+  
+  console.log('bufferLength', bufferLength)
+  
+  const dataArray = new Uint8Array(bufferLength);
+  
+  console.log('dataArray', dataArray)
+  
+  console.log(analyser.getByteFrequencyData(dataArray));
+
+})
+</script>
+</html>
