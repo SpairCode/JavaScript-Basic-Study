@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script type="text/javascript">
+    var singleNumber = function(nums) {
+        const set = new Set()
+      
+      nums.forEach(num => {
+        // 遍历数组，加入set没有的值，删除已存在的值
+        set.has(num)? set.delete(num) : set.add(num)
+      })
+    
+      // 返回set唯一的值
+      return [...set][0]
+    };
+</script>
+</html>

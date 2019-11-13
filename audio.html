@@ -6,45 +6,81 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Audio Context</title>
 </head>
+<style type="text/css">
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  #playButton {
+    margin: 10px auto;
+    border-radius: 5px;
+    width: 100px;
+    height: 50px;
+    font-size: 18px;
+    text-align: center;
+    line-height: 50px;
+    color: #fff;
+    background-color: black;
+    cursor: pointer;
+  }
+</style>
 <body>
-    <audio controls="controls" id="audio">
-      <source src="./audio.mp3" type="audio/mp3">
-    </audio>
+  <canvas id="canvas"></canvas>
+  <audio id="audio" src="http://m8.music.126.net/21180815163607/04976f67866d4b4d11575ab418904467/ymusic/515a/5508/520b/f0cf47930abbbb0562c9ea61707c4c0b.mp3?infoId=92001" crossOrigin="anonymous"></audio>
+  <div id="playButton"> Play </button>
 </body>
 <script type="text/javascript">
 // https://developer.mozilla.org/zh-CN/docs/Web/Events 事件参考
 window.addEventListener('load', function () {
-  // 关联音频输入，对音频进行解码，控制音频播放等基础操作
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  
-  const ctx = new AudioContext();
-  const analyser = ctx.createAnalyser();
-  analyser.fftSize = 512;
+
   
   // 获取 audio 节点
   const audio = document.getElementById('audio');
+  // 获取 button 节点
+  const playBtn = document.getElementById('playButton');
+  // 播放 audio
+  playBtn.addEventListener('click', function () {
+    audio.play();
+    loadAudio()
+  });
 
-  audio.play();
-  
-  console.log('audio', audio)
-  // 创建音频源
-  const source = ctx.createMediaElementSource(audio);
-  
-  source.connect(analyser)
-  
-  analyser.connect(ctx.destination)
-  
-  console.log('ctx', ctx)
-  
-  const bufferLength = analyser.frequencyBinCount;
-  
-  console.log('bufferLength', bufferLength)
-  
-  const dataArray = new Uint8Array(bufferLength);
-  
-  console.log('dataArray', dataArray)
-  
-  console.log(analyser.getByteFrequencyData(dataArray));
+  function loadAudio () {
+    var context = new (window.AudioContext || window.webkitAudioContext)();
+    var analyser = context.createAnalyser();
+    analyser.fftSize = 512;
+    var source = context.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(context.destination);
+    var bufferLength = analyser.frequencyBinCount;
+    var dataArray = new Uint8Array(bufferLength);
+    console.log('dataArray', dataArray)
+    var canvas = document.getElementById("canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    var ctx = canvas.getContext("2d");
+    var WIDTH = canvas.width;
+    var HEIGHT = canvas.height;
+    var barWidth = WIDTH / bufferLength * 1.5;
+    var barHeight;
+
+    function renderFrame() {
+      requestAnimationFrame(renderFrame);
+      analyser.getByteFrequencyData(dataArray);
+      ctx.clearRect(0, 0, WIDTH, HEIGHT);
+      for (var i = 0, x = 0; i < bufferLength; i++) {
+          barHeight = dataArray[i];
+          var r = barHeight + 25 * (i / bufferLength);
+          var g = 250 * (i / bufferLength);
+          var b = 50;
+          ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+          ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+          x += barWidth + 2;
+      }
+    }
+
+    renderFrame();
+  }
 
 })
 </script>
