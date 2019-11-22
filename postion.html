@@ -31,7 +31,7 @@
 
 * { margin: 0; padding: 0; }
 html,body { width: 100%; height: 100%; font-family: 'KH';}
-.contentBox { width: 100%; height: 200%; }
+.contentBox { width: 100%; }
 .setFont { width: 200px; height: 200px; font-size: 60px; text-align: center; line-height: 200px; }
 .relative { position: relative; top: 30px; left: 30px; background-color: #f5f5dcb0; }
 .absolute { position: absolute; top: 30px; left: 30px; background-color: rgba(255, 228, 196, .4); }
@@ -45,13 +45,21 @@ relative定位自动切换为fixed定位；
 fixed定位自动切换回relative定位 */
 .sticky { position: sticky; top: 0px; width: 100%; background-color: #a9a9a9bf; transition: all .8s; }
 .headText { width: 100%; height: 200px; text-align: center; line-height: 200px; font-size: 60px; background-color: #faebd7d1; }
-.contentText { position: sticky; top: 0px; width: 100%; height: 500px; text-align: center; line-height: 500px; font-size: 60px; background-color: #faebd7d1; }
-.footerText { position: sticky; top: 0px; width: 100%; height: 200px; text-align: center; line-height: 200px; font-size: 60px; background-color: #d9900ad1; }
+.contentText { position: sticky; top: 200px; width: 100%; height: 500px; text-align: center; line-height: 500px; font-size: 60px; background-color: #faebd7d1; }
+.footerText { position: sticky; top: 700px; width: 100%; height: 200px; text-align: center; line-height: 200px; font-size: 60px; background-color: #d9900ad1; }
 </style>
 <body>
   <div class="contentBox">
     <div class="sticky setFont"> sticky </div>
     <div class="headText"> This is Text </div>
+    <div class="contentText"> contentText Area </div>
+    <div class="contentText"> contentText Area </div>
+    <div class="contentText"> contentText Area </div>
+    <div class="contentText"> contentText Area </div>
+    <div class="contentText"> contentText Area </div>
+    <div class="contentText"> contentText Area </div>
+    <div class="contentText"> contentText Area </div>
+    <div class="contentText"> contentText Area </div>
     <div class="contentText"> contentText Area </div>
     <div class="contentText"> contentText Area </div>
     <div class="contentText"> contentText Area </div>
