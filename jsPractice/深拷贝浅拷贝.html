@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> 深拷贝浅拷贝 </title>
+</head>
+<body>
+    
+</body>
+<script type="text/javascript">
+// 浅拷贝
+// JSON.stringify() concat() slice()
+// 深拷贝
+// JSON.parse() JSON.stringify()
+let arr = [23, 34, 45, 56 ,78, 546, 75, 86, 89]
+
+function max (pre, next) {
+  return Math.max(pre, next)
+}
+console.log('arr', arr)
+console.log(arr.reduce(max))
+
+// sort
+arr.sort((a, b) => { return a - b });
+
+console.log(arr, arr[arr.length - 1])
+
+//ES6
+console.log('...arr', Math.max(...arr))
+
+//flat 扁平化数组
+
+let flatArr = [1, [2, [3, 4]]]
+console.log(flatArr.flat(Infinity))
+
+let strArr = flatArr.toString().split(',').map(function(item) {
+  return parseInt(item)
+})
+
+console.log('strArr', strArr)
+
+function findIndex (array, predicate, context) {
+  console.log('array', array)
+  console.log('predicate', predicate)
+  console.log('context', context)
+  for (var i = 0; i < array.length; i++) {
+    if (predicate.call(context, array[i], i, array)) {
+      return i
+    }
+  }
+  return -1
+}
+
+console.log(findIndex([1,2,3,4], function (item, i , array) {
+  if (item == 3) {
+    return true
+  }
+}))
+
+function findLastIndex(array, predicate, context) {
+  var length = array.length;
+  for (var i = length - 1; i >= 0; i--) {
+    if (predicate.call(context, array[i], i, array)) return i;
+  }
+  return -1;
+}
+
+console.log(findLastIndex([1, 2, 3, 4], function(item, index, array){
+  if (item >= 3) {
+    console.log('item', item)
+    return true;
+  }
+})) // 0
+</script>
+</html>
