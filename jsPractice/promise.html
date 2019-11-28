@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> Promise </title>
+</head>
+<body>
+    
+</body>
+<script type="text/javascript">
+//promise status --pending --fulfilled --rejected
+
+// 一旦状态改变，就不会再变
+
+// pending ===> fulfilled
+// pending ===> rejected
+
+// function red(){
+//   console.log('red')
+// }
+
+// function green(){
+//   console.log('green')
+// }
+
+// function yellow(){
+//   console.log('yellow')
+// }
+
+// var light = function(timmer, callback){
+//   return new Promise(function(resolve, reject) {
+//     setTimeout(function() {
+//       callback()
+//       resolve()
+//     }, timmer)
+//   })
+// }
+
+// var step = function() {
+//   Promise.resolve().then(function(){
+//       return light(1000, red);
+//   }).then(function(){
+//       return light(1000, green);
+//   }).then(function(){
+//       return light(1000, yellow);
+//   }).then(function(){
+//       step()
+//   })
+// }
+
+// step()
+
+function printDate () {
+  console.log(new Date())
+}
+
+function timeout(time, callback) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, time)
+    // 传入的函数执行
+    callback()
+    // 相当于返回的参数
+    resolve('done')
+  })
+}
+
+timeout(1000, printDate).then((value) => {
+  console.log(value)
+})
+</script>
+</html>
