@@ -7,7 +7,14 @@
     <title> Promise </title>
 </head>
 <body>
-    
+  <svg width="100" height="100" viewBox="0 0 95 50">
+    <g stroke="#c6e48b" fill="#ebedf0" stroke-width="2">
+      <circle cx="25" cy="25" r="15" />
+      <circle cx="40" cy="25" r="15" />
+      <circle cx="55" cy="25" r="15" />
+      <circle cx="70" cy="25" r="15" />
+    </g>
+  </svg>  
 </body>
 <script type="text/javascript">
 //promise status --pending --fulfilled --rejected
@@ -69,5 +76,113 @@ function timeout(time, callback) {
 timeout(1000, printDate).then((value) => {
   console.log(value)
 })
+
+// 异步加载图片
+
+function loadImageAsync(url) {
+  return new Promise(function(resolve, reject) {
+    const image = new Image();
+
+    image.onload = function() {
+      resolve(image);
+      console.log('image loading success')
+    };
+
+    image.onerror = function() {
+      reject(new Error('Could not load image at ' + url));
+    };
+
+    image.src = url;
+  })
+}
+
+// promise ajax
+const getJSON = function(url) {
+  const promise = new Promise(function(resolve, reject){
+    const handler = function() {
+      if (this.readyState !== 4) {
+        return;
+      }
+      if (this.status === 200) {
+        resolve(this.response);
+      } else {
+        reject(new Error(this.statusText));
+      }
+    };
+    const client = new XMLHttpRequest();
+    client.open("GET", url);
+    client.onreadystatechange = handler;
+    client.responseType = "json";
+    client.setRequestHeader("Accept", "application/json");
+    client.send();
+
+  });
+
+  return promise;
+};
+
+// getJSON("./getJSON.json").then(function(json) {
+//   console.log('Contents: ' + json);
+// }, function(error) {
+//   console.error('出错了', error);
+// });
+
+// console.log(loadImageAsync('https://ss2.bdstatic.com/6Ot1bjeh1BF3odCf/it/u=2827514123,2150960417&fm=74&app=80&f=JPEG&size=f121,140?sec=1880279984&t=001d014569ae0bab15168a2f97356baf'));
+
+new Promise((resolve, reject) => {
+  return resolve('resolve function'); // 1
+  console.log('success msg!'); // 2
+}).then(res => {
+  console.log(res);
+});
+
+// 上面代码中，调用resolve(1)以后
+// 后面的console.log(2)还是会执行，并且会首先打印出来。
+// 这是因为立即 resolved 的 Promise 是在本轮事件循环的末尾执行，总是晚于本轮循环的同步任务。
+
+// 一般来说，调用resolve或reject以后，Promise 的使命就完成了，
+// 后继操作应该放到then方法里面，而不应该直接写在resolve或reject的后面。
+// 所以，最好在它们前面加上return语句，这样就不会有意外。
+
+
+// const promise = new Promise(function(resolve, reject) {
+//   throw new Error('test')
+// })
+
+// promise.catch(function(error) {
+//   console.log(error)
+// })
+
+// const promise = new Promise(function(resolve, reject) {
+// //   resolve('ok');
+//   throw new Error('test');
+// });
+
+// promise.then(function (value) { 
+//   console.log(value) 
+// }).catch(function(error) { 
+//   console.log('error:', error) 
+// })
+
+// 上面代码中，Promise 在resolve语句后面，再抛出错误，不会被捕获，等于没有抛出。
+// 因为 Promise 的状态一旦改变，就永久保持该状态，不会再变了。
+
+const someAsyncThing = function() {
+  return new Promise(function(resolve, reject) {
+    // 下面一行会报错，因为x没有声明
+    resolve(x + 2)
+  })
+}
+
+someAsyncThing().then(function() {
+  console.log('everything is great')
+}).catch(function(error) {
+  console.log('oh no', error)
+}).finally(() => {
+  console.log('Server Stop')
+})
+
+setTimeout(() => { console.log(123) }, 2000)
+
 </script>
 </html>
