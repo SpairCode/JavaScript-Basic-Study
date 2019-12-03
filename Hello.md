@@ -1,1 +1,0 @@
-Thii is wirteFile Demo
