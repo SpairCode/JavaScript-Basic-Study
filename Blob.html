@@ -7,24 +7,47 @@
     <title> Blob </title>
 </head>
 <body>
-  <h1> Blob </h1>
+  <input id="upload" type="file" />
+  <img id="preview" src="" alt="预览"/>
 </body>
 <script type="text/javascript">
 //创建一个以二进制数据存储的html文件
-const text = "<div>hello world</div>";
-const blob = new Blob([text], { type: "text/html" }); // Blob {size: 22, type: "text/html"}
+const text = "<div>hello world</div>"
+const blob = new Blob([text], { type: "text/html" }) // Blob {size: 22, type: "text/html"}
 //以文本读取
-const textReader = new FileReader();
-textReader.readAsText(blob);
+const textReader = new FileReader()
+textReader.readAsText(blob)
 textReader.onload = function() {
-  console.log(textReader.result); // <div>hello world</div>
-};
+  console.log(textReader.result) // <div>hello world</div>
+}
 
 //以ArrayBuffer形式读取
-const bufReader = new FileReader();
-bufReader.readAsArrayBuffer(blob);
+const bufReader = new FileReader()
+bufReader.readAsArrayBuffer(blob)
 bufReader.onload = function() {
-  console.log(new Uint8Array(bufReader.result)); // Uint8Array(22) [60, 100, 105, 118, 62, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 60, 47, 100, 105, 118, 62]
-};
+  console.log(new Uint8Array(bufReader.result)) // Uint8Array(22) [60, 100, 105, 118, 62, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 60, 47, 100, 105, 118, 62]
+}
+
+//我们直接创建一个Uint8Array并填入上面的数据
+const u8Buf = new Uint8Array([60, 100, 105, 118, 62, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 60, 47, 100, 105, 118, 62])
+const u8Blob = new Blob([u8Buf], { type: "text/html" }) // Blob {size: 22, type: "text/html"}
+const textReaders = new FileReader()
+
+textReaders.readAsText(u8Blob)
+textReaders.onload = function() {
+  console.log(textReader.result) // 同样得到div>hello world</div>
+}
+
+// upload img file
+
+const upload = document.querySelector("#upload");
+const preview = document.querySelector("#preview");
+
+upload.onchange = function() {
+  const file = upload.files[0]; //File对象
+  const src = URL.createObjectURL(file)
+  preview.src = src
+}
+
 </script> 
 </html>

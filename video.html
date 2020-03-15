@@ -27,8 +27,23 @@ html,body {
 </style>
 <body>
   <div class="videoBox">
-    <video class="video" autoplay="autoplay" loop='loop' muted src="https://static.looklook.cn/10dian/videos/video.f272cc4.mp4"></video>
+    <!-- <video class="video" autoplay="autoplay" loop='loop' muted src="https://static.looklook.cn/10dian/videos/video.f272cc4.mp4"></video> -->
     <!-- <video class="video" autoplay="autoplay" loop='loop' muted src="http://192.168.10.235:8082/tmp/vod/inputfile.mp4"></video> -->
+    <!-- <video controls autoplay>  
+      <source src="http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8" type="application/vnd.apple.mpegurl" /> 
+      <p class="warning">Your browser does not support HTML5 video.</p>  
+    </video>   -->
+    <!-- <audio src="audio.mp3" autoplay="autoplay" loop='loop' muted id="audio"></audio> -->
+    <!-- <button style="width: 200px; height: 200px;" id="button"> Play Audio </button> -->
   </div>
 </body>
+<script type="text/javascript">
+  let body = document.querySelector('body')
+  
+  body.addEventListener('click', () => {
+    let audios = document.createElement('audio')
+    audios.src = 'file:///Users/fanroy/Documents/JavaScript-Basic-Study/audio.mp3';
+    audios.play()
+  })
+</script>
 </html>
