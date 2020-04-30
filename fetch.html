@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Fetch </title>
+</head>
+<style type="text/css">
+  @keyframes rotate-90-cw {
+    0% {
+      -webkit-transform: rotate(0);
+              transform: rotate(0);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+              transform: rotate(360deg);
+    }
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    font-family: "Microsoft Yahei" ,'Avenir', Helvetica, Arial, sans-serif;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+  }
+
+  .scoreBoxOut {
+    position: fixed;
+    border-radius: 300px;
+    width: 600px;
+    height: 600px;
+    background-image: url('tmbg.png');
+    background-position: center;
+    background-size: cover;
+    animation: rotate-90-cw 10s cubic-bezier(0.49, 0.48, 0.49, 0.47) 1;
+  }
+
+  .scoreBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 200px;
+    width: 350px;
+    height: 350px;
+    background-image: linear-gradient(to bottom, #0093ed, #00ace1);
+    transform: rotate(0);
+  }
+
+  .scoreBoxOne {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 150px;
+    width: 300px;
+    height: 300px;
+    background-image: linear-gradient(to bottom, #1d9ded, #0090d2);
+  }
+
+  .scoreBoxTwo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 135px;
+    width: 270px;
+    height: 270px;
+    background-image: linear-gradient(to bottom, #fcffff, #63e0e0);
+  }
+
+  .scoreBoxThree {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-radius: 120px;
+    width: 230px;
+    height: 230px;
+    background-image: linear-gradient(to bottom, #1c9ceb, #0094d8);
+  }
+
+  .score {
+    position: absolute;
+    bottom: 0px;
+    color: #802d10;
+    background-image: linear-gradient(to right, #f7dc96, #eec237);
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-weight: 700;
+  }
+
+  .scoreBoxFour {
+    color: #fff;
+    font-size: 60px;
+  }
+
+  .scoreBoxFour > p > span {
+    font-size: 18px;
+  }
+
+  
+</style>
+<body>
+  <div class="scoreBoxOut"></div>
+  <div class="scoreBox">
+    <div class="scoreBoxOne">
+      <div class="scoreBoxTwo">
+        <div class="scoreBoxThree">
+            <div class="scoreBoxFour">
+              <p> 93 <span> 分 </span> </p>
+            </div>
+          <p class="score">本次考试得分</p>
+        </div> 
+      </div>
+    </div>
+  </div>
+</body>
+<script type="text/javascript">
+  async function queryNetwork () {
+    await fetch('http://test.kitsprite.com:8080/VRClass_Post.ashx?methodName=IsNetWorkConnect&').then((res) => {
+      if (res.status === 200) {
+        console.log('res', res.data)
+      }
+    }).catch((err) => {
+      console.log('This Network Error')
+    })
+  }
+
+  queryNetwork()
+</script>
+</html>
