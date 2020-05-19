@@ -44,7 +44,7 @@
     background-image: url('tmbg.png');
     background-position: center;
     background-size: cover;
-    animation: rotate-90-cw 10s cubic-bezier(0.49, 0.48, 0.49, 0.47) 1;
+    animation: rotate-90-cw 10s cubic-bezier(0.49, 0.48, 0.49, 0.47)  infinite;
   }
 
   .scoreBox {
@@ -127,13 +127,18 @@
 </body>
 <script type="text/javascript">
   async function queryNetwork () {
-    await fetch('http://test.kitsprite.com:8080/VRClass_Post.ashx?methodName=IsNetWorkConnect&').then((res) => {
-      if (res.status === 200) {
-        console.log('res', res.data)
-      }
-    }).catch((err) => {
+    console.time()
+    fetch('http://test.kitsprite.com:8080/VRClass_Post.ashx?methodName=IsNetWorkConnect&')
+    .then((response) => {
+      return response.json()
+    })
+    .then((data) => {
+      console.log('data', data)
+    })
+    .catch((err) => {
       console.log('This Network Error')
     })
+    console.timeEnd()
   }
 
   queryNetwork()
