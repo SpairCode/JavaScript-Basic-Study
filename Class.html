@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Class Private</title>
+</head>
+<body>
+    
+</body>
+<script type="text/javascript">
+
+// pending: 初始状态，既不是成功，也不是失败状态。
+// fulfilled: 意味着操作成功完成。
+// rejected: 意味着操作失败。
+
+const promise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('resolve function')
+  }, 300)
+})
+
+promise.then((value) => {
+  console.log(value)
+}).catch((err) => {
+  console.log('catch function')
+}).finally(() => {
+  console.log('finally function')
+})
+
+
+
+</script>
+</html>
