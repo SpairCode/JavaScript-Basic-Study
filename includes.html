@@ -10,5 +10,28 @@
 </body>
 <script type="text/javascript">
 var arr = [1, 2, 3]
+
+// ...的应用
+Math.max(...[14, 3, 77])
+
+// 参数写法
+function pick({id, name, age}) {
+  return {
+    guid: id,
+    ...(name && {name}),
+    ...(age && {age})
+  }
+}
+
+// React
+// componentWillReceiveProps({active}) {
+// 	this.setState({active})
+// }
+
+// handleEvent = () => {
+//   this.setState(({data}) => ({
+//     data: data.set("key", "value")
+//   }))
+// };
 </script>
 </html>

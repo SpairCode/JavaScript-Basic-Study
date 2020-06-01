@@ -138,6 +138,7 @@
     .catch((err) => {
       console.log('This Network Error')
     })
+    .finally(() => { console.log('Finshed') })
     console.timeEnd()
   }
 
