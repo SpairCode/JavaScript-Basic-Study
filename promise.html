@@ -12,8 +12,8 @@
 <script type="text/javascript">
 let promise = new Promise((resolve, reject) => {
   setTimeout(() => {
-    resolve('I have been resolve')
-  }, 2000)
+    5 >= 2 ? resolve('I have been resolve') : reject('reject callback')
+  }, 1000)
 })
 
 promise.then(res => {

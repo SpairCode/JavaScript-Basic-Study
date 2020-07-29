@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    function* foo(x) {
+        yield x + 1;
+        yield x + 2;
+        return x + 3;
+    }
+
+    console.log(foo(1))
+
+    function* countAppleSales() {
+        var saleList = [3, 7, 5];
+        for (var i = 0; i < saleList.length; i++) {
+            console.log(yield saleList[i])
+        }
+    }
+
+    countAppleSales(12)
+</script>
+
+</html>
