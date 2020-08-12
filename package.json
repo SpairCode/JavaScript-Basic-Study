@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "@svrx/cli": "^1.1.2",
     "art-template": "^4.13.2",
-    "express-art-template": "^1.0.1"
+    "express-art-template": "^1.0.1",
+    "global": "^4.4.0"
   }
 }

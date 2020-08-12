@@ -3,19 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>async</title>
+    <title>Document</title>
 </head>
 <body>
     
 </body>
 <script type="text/javascript">
-async function demo () {
-  console.log('async function')
+var a = 100
+function F1 () {
+    var b = 200
+    function F2 () {
+        var c = 300
+        console.log('a', a)
+        console.log('b', b)
+        console.log('c', c)
+    }
+    F2()
 }
 
-demo()
-
-
+F1()
 </script>
 </html>

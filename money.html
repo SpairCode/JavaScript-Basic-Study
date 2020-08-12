@@ -24,9 +24,21 @@
         width: 180px;
         height: 40px;
         border-radius: 5px;
+        /* visibility: hidden; */
     }
 
     .button {
+        display: inline-block;
+        width: 80px;
+        height: 40px;
+        background-color: #409EFF;
+        text-align: center;
+        line-height: 40px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .add {
         display: inline-block;
         width: 80px;
         height: 40px;
@@ -35,19 +47,47 @@
         line-height: 40px;
         border-radius: 5px;
     }
+
+    .seconds {
+        margin: 60px;
+        font-size: 230px;
+        font-family: DINAlternate-Bold,DINAlternate;
+    }
 </style>
 <body>
     <input class="search" value="008888" type="text" maxlength="6" placeholder="please search code number">
     <span class="button"> search </span>
-    <h1 style="margin-top: 100px;"> F12 view Data </h1>
+    <span class="add"> add </span>
+    <!-- <h1 style="margin-top: 100px;"> F12 view Data </h1> -->
+    <h1 class="seconds"></h1>
 </body>
 <script>
     document.querySelector('.button').addEventListener('click', () => {
         queryData()
     })
 
-    queryData = () => {
-        let code = document.querySelector('.search').value
+    let searchList = []
+
+    document.querySelector('.add').addEventListener('click', () => {
+        searchList.push(document.querySelector('.search').value)
+        console.table('code number list', searchList)
+    })
+
+    searchData = () => {
+        if (searchList.length !== 0) {
+            // for(var index in searchList) {
+            //     var all = Promise.all(queryData(searchList[index]))
+            // }
+            // return all
+            queryData(document.querySelector('.search').value)
+        } else {
+            queryData(document.querySelector('.search').value)
+        }
+    }
+
+    async function queryData (code) {
+        clearTimeout(st)
+        // let code = document.querySelector('.search').value
         fetch('http://fundgz.1234567.com.cn/js/'+ code +'.js?rt='+ new Date().getTime(), {
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             // credentials: 'same-origin', // include, same-origin, *omit
@@ -68,13 +108,14 @@
             console.log(err)
         })
         if (new Date().getHours() < 15) {
-            setTimeout(() => {
-                queryData()
+            var st = setTimeout(() => {
+                searchData()
             }, 60000)
+            st
         }
     }
 
-    queryData()
+    queryData(document.querySelector('.search').value)
 
 </script>
 </html>
