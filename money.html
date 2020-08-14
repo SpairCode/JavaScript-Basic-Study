@@ -48,6 +48,10 @@
         border-radius: 5px;
     }
 
+    .serachArea {
+        visibility: hidden;
+    }
+
     .seconds {
         margin: 60px;
         font-size: 230px;
@@ -55,9 +59,11 @@
     }
 </style>
 <body>
-    <input class="search" value="008888" type="text" maxlength="6" placeholder="please search code number">
-    <span class="button"> search </span>
-    <span class="add"> add </span>
+    <div class="serachArea">
+        <input class="search" value="008888" type="text" maxlength="6" placeholder="please search code number">
+        <span class="button"> search </span>
+        <span class="add"> add </span>
+    </div>
     <!-- <h1 style="margin-top: 100px;"> F12 view Data </h1> -->
     <h1 class="seconds"></h1>
 </body>
@@ -67,55 +73,67 @@
     })
 
     let searchList = []
+    let ST
 
     document.querySelector('.add').addEventListener('click', () => {
         searchList.push(document.querySelector('.search').value)
         console.table('code number list', searchList)
     })
 
-    searchData = () => {
+    async function searchData () {
         if (searchList.length !== 0) {
             // for(var index in searchList) {
             //     var all = Promise.all(queryData(searchList[index]))
             // }
             // return all
-            queryData(document.querySelector('.search').value)
+            const data = await queryData(document.querySelector('.search').value)
+            const datas = await queryData('005224')
+            Promise.all([data, datas]).then((value) => {
+                return value
+            })
         } else {
-            queryData(document.querySelector('.search').value)
+            clearTimeout(ST)
+            // const data = await queryData(document.querySelector('.search').value)
+            // const datas = await queryData('005224')
+            if (new Date().getHours() < 15) {
+                ST = setTimeout(() => {
+                    searchData()
+                    console.log(new Date(),'---------------ST---------------')
+                }, 90000)
+            }
+            // Promise.all([data, datas]).then((value) => {
+            //     return value
+            // })
+            Promise.all([queryData(document.querySelector('.search').value), queryData('005224')]).then((value) => {
+                return value
+            })
         }
     }
 
     async function queryData (code) {
-        clearTimeout(st)
         // let code = document.querySelector('.search').value
-        fetch('http://fundgz.1234567.com.cn/js/'+ code +'.js?rt='+ new Date().getTime(), {
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            // credentials: 'same-origin', // include, same-origin, *omit
-            headers: {
-              'content-type': 'application/json'
-            },
-            method: 'GET', // *GET, POST, PUT, DELETE, etc.
-            mode: 'no-cors',
-            // no-cors 不会读取 Response 的任何属性 
-        }).then(res => {
-            if (res.status === 200) {
-                return res.json()
-            }
-        }).then(json => {
-            console.log(json);
-            return json
-        }).catch(err => {
-            console.log(err)
+        return new Promise((resolve, reject) => {
+            fetch('http://fundgz.1234567.com.cn/js/'+ code +'.js?rt='+ new Date().getTime(), {
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                // credentials: 'same-origin', // include, same-origin, *omit
+                headers: {
+                'content-type': 'application/json'
+                },
+                method: 'GET', // *GET, POST, PUT, DELETE, etc.
+                mode: 'no-cors',
+                // no-cors 不会读取 Response 的任何属性 
+            }).then((res) => {
+                resolve(res.json)
+            }).catch((err) => {
+                reject(err)
+            }).finally(() => {
+                console.log(new Date(),'finally')
+            })
         })
-        if (new Date().getHours() < 15) {
-            var st = setTimeout(() => {
-                searchData()
-            }, 60000)
-            st
-        }
     }
 
-    queryData(document.querySelector('.search').value)
+    // queryData(document.querySelector('.search').value)
+    searchData()
 
 </script>
 </html>
