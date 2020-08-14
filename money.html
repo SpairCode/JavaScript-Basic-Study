@@ -89,6 +89,7 @@
             const data = await queryData(document.querySelector('.search').value)
             const datas = await queryData('005224')
             Promise.all([data, datas]).then((value) => {
+                console.log('value', value)
                 return value
             })
         } else {
@@ -99,12 +100,13 @@
                 ST = setTimeout(() => {
                     searchData()
                     console.log(new Date(),'---------------ST---------------')
-                }, 90000)
+                }, 10000)
             }
             // Promise.all([data, datas]).then((value) => {
             //     return value
             // })
             Promise.all([queryData(document.querySelector('.search').value), queryData('005224')]).then((value) => {
+                console.log('value', value)
                 return value
             })
         }
