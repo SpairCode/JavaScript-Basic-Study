@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Vue </title>
 </head>
+
 <body>
-    
+
 </body>
 <script type="text/javascript">
 
 
     // UI 渲染
-    function cbUI (newval) {
+    function cbUI(newval) {
         console.log('newval', newval)
         console.log('UI Render Function')
     }
@@ -20,16 +22,16 @@
     // 订阅模式 Dep
     class Dep {
         // 存放 Watch 对象的数组
-        constructor () {
+        constructor() {
             this.subs = []
         }
 
         // 在subs 添加 Watch 对象
-        addSubs (sub) {
+        addSubs(sub) {
             this.subs.push(sub)
         }
 
-        notify () {
+        notify() {
             // console.log('List Task Update', new Date().getTime())
             console.log('List Task Update', new Date().getTime())
             this.subs.forEach((list) => {
@@ -40,22 +42,66 @@
 
 
     // 观察者模式
+    // class Watcher {
+    //     constructor() {
+    //         Dep.target = this
+    //     }
+
+    //     update() {
+    //         console.log('Dep UI Update')
+    //     }
+    // }
+
+    let uid = 0;
     class Watcher {
-        constructor () {
-            Dep.target = this
+        constructor() {
+            this.id = ++uid;
         }
 
-        update () {
-            console.log('Dep UI Update')
+        update() {
+            console.log('watch' + this.id + ' update');
+            queueWatcher(this);
+        }
+
+        run() {
+            console.log('watch' + this.id + '视图更新啦～');
+        }
+    }
+
+    let has = {};
+    let queue = [];
+    let waiting = false;
+    function queueWatcher(watcher) {
+        const id = watcher.id;
+        if (has[id] == null) {
+            has[id] = true;
+            queue.push(watcher);
+            if (!waiting) {
+                waiting = true;
+                nextTick(flushSchedulerQueue);
+            }
         }
     }
 
 
-    Dep.target = null
+    function flushSchedulerQueue() {
+        let watcher, id;
+        for (index = 0; index < queue.length; index++) {
+            watcher = queue[index];
+            id = watcher.id;
+            has[id] = null;
+            watcher.run();
+        }
+        waiting = false;
+    }
+
+
+
+    // Dep.target = null
 
 
     // 监听属性变化 取值赋值
-    function defineReactive (obj, key, value) {
+    function defineReactive(obj, key, value) {
 
         const dep = new Dep()
 
@@ -75,7 +121,7 @@
     }
 
 
-    function obsever (value) {
+    function obsever(value) {
         if (!value || (typeof value !== 'object')) {
             return
         }
@@ -87,14 +133,80 @@
 
     // 构造类
     class Vue {
-        constructor (options) {
+        constructor(options) {
             this._data = options.data
             obsever(this._data)
             new Watcher()
         }
     }
 
-    let o  = new Vue({
+
+    // 创建一个Vnode节点
+    class VNode {
+        constructor(tag, data, children, text, elm) {
+            /*当前节点的标签名*/
+            this.tag = tag;
+            /*当前节点的一些数据信息，比如 props、attrs 等数据*/
+            this.data = data;
+            /*当前节点的子节点，是一个数组*/
+            this.children = children;
+            /*当前节点的文本*/
+            this.text = text;
+            /*当前虚拟节点对应的真实 dom 节点*/
+            this.elm = elm;
+        }
+    }
+
+    // 创建一个空节点
+    function createEmptyVNode() {
+        const node = new VNode();
+        node.text = '';
+        return node;
+    }
+
+    // 创建一个文本节点
+    function createTextVNode(val) {
+        return new VNode(undefined, undefined, undefined, String(val));
+    }
+
+    // 克隆一个VNode节点
+    function cloneVNode(node) {
+        const cloneVnode = new VNode(
+            node.tag,
+            node.data,
+            node.children,
+            node.text,
+            node.elm
+        );
+        return cloneVnode;
+    }
+
+    // create Abstract syntax tree AST
+    // 正则解析字符串
+
+
+    // nextTick
+    let callbacks = [];
+    let pending = false;
+    function nextTick(cb) {
+        callbacks.push(cb);
+        if (!pending) {
+            pending = true;
+            setTimeout(flushCallbacks, 0);
+        }
+    }
+
+
+    function flushCallbacks() {
+        pending = false;
+        const copies = callbacks.slice(0);
+        callbacks.length = 0;
+        for (let i = 0; i < copies.length; i++) {
+            copies[i]();
+        }
+    }
+
+    let o = new Vue({
         data: {
             msg: 'this is msg'
         }
@@ -106,4 +218,5 @@
     o._data.msg = 'MSG4'
 
 </script>
+
 </html>
