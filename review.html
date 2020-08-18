@@ -38,6 +38,25 @@
 
     test()
 
+    let p1 = Promise.resolve({ data: 1})
+
+    let p2 = new Promise(resolve => {
+        setTimeout(() => {
+            resolve({ data: 2 })
+        }, 1000)
+    })
+
+    let p3 = Promise.resolve({ err: 3 })
+
+    Promise.all([p3, p2, p1])
+        .then(result => {
+            // 返回的结果是按照Array中编写实例的顺序来
+            console.log(result) // [ 3, 2, 1 ]
+        })
+        .catch(reason => {
+            console.log("失败:reason")
+        })
+
 </script>
 
 </html>
