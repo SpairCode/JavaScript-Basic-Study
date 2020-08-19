@@ -157,6 +157,130 @@
         }
     }
 
+    function createVNode(type, props = null
+        , children = null) {
+        if (props) {
+            // 处理 props 相关逻辑，标准化 class 和 style
+        }
+        // 对 vnode 类型信息编码
+        const shapeFlag = isString(type)
+            ? 1 /* ELEMENT */
+            : isSuspense(type)
+                ? 128 /* SUSPENSE */
+                : isTeleport(type)
+                    ? 64 /* TELEPORT */
+                    : isObject(type)
+                        ? 4 /* STATEFUL_COMPONENT */
+                        : isFunction(type)
+                            ? 2 /* FUNCTIONAL_COMPONENT */
+                            : 0
+        const vnode = {
+            type,
+            props,
+            shapeFlag,
+            // 一些其他属性
+        }
+        // 标准化子节点，把不同数据类型的 children 转成数组或者文本类型
+        normalizeChildren(vnode, children)
+        return vnode
+    }
+
+
+    render(vnode, rootContainer)
+    const render = (vnode, container) => {
+        if (vnode == null) {
+            // 销毁组件
+            if (container._vnode) {
+                unmount(container._vnode, null, null, true)
+            }
+        } else {
+            // 创建或者更新组件
+            patch(container._vnode || null, vnode, container)
+        }
+        // 缓存 vnode 节点，表示已经渲染
+        container._vnode = vnode
+    }
+
+    const patch = (n1, n2, container, anchor = null, parentComponent = null, parentSuspense = null, isSVG = false, optimized = false) => {
+        // 如果存在新旧节点, 且新旧节点类型不同，则销毁旧节点
+        if (n1 && !isSameVNodeType(n1, n2)) {
+            anchor = getNextHostNode(n1)
+            unmount(n1, parentComponent, parentSuspense, true)
+            n1 = null
+        }
+        const { type, shapeFlag } = n2
+        switch (type) {
+            case Text:
+                // 处理文本节点
+                break
+            case Comment:
+                // 处理注释节点
+                break
+            case Static:
+                // 处理静态节点
+                break
+            case Fragment:
+                // 处理 Fragment 元素
+                break
+            default:
+                if (shapeFlag & 1 /* ELEMENT */) {
+                    // 处理普通 DOM 元素
+                    processElement(n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, optimized)
+                }
+                else if (shapeFlag & 6 /* COMPONENT */) {
+                    // 处理组件
+                    processComponent(n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, optimized)
+                }
+                else if (shapeFlag & 64 /* TELEPORT */) {
+                    // 处理 TELEPORT
+                }
+                else if (shapeFlag & 128 /* SUSPENSE */) {
+                    // 处理 SUSPENSE
+                }
+        }
+    }
+
+    const processComponent = (n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, optimized) => {
+        if (n1 == null) {
+            // 挂载组件
+            mountComponent(n2, container, anchor, parentComponent, parentSuspense, isSVG, optimized)
+        }
+        else {
+            // 更新组件
+            updateComponent(n1, n2, parentComponent, optimized)
+        }
+    }
+
+    const mountComponent = (initialVNode, container, anchor, parentComponent, parentSuspense, isSVG, optimized) => {
+        // 创建组件实例
+        const instance = (initialVNode.component = createComponentInstance(initialVNode, parentComponent, parentSuspense))
+        // 设置组件实例
+        setupComponent(instance)
+        // 设置并运行带副作用的渲染函数
+        setupRenderEffect(instance, initialVNode, container, anchor, parentSuspense, isSVG, optimized)
+    }
+
+    const setupRenderEffect = (instance, initialVNode, container, anchor, parentSuspense, isSVG, optimized) => {
+        // 创建响应式的副作用渲染函数
+        instance.update = effect(function componentEffect() {
+            if (!instance.isMounted) {
+                // 渲染组件生成子树 vnode
+                const subTree = (instance.subTree = renderComponentRoot(instance))
+                // 把子树 vnode 挂载到 container 中
+                patch(null, subTree, container, anchor, instance, parentSuspense, isSVG)
+                // 保留渲染生成的子树根 DOM 节点
+                initialVNode.el = subTree.el
+                instance.isMounted = true
+            }
+            else {
+                // 更新组件
+            }
+        }, prodEffectOptions)
+    }
+
+
+
+
     // 创建一个空节点
     function createEmptyVNode() {
         const node = new VNode();
