@@ -201,6 +201,7 @@
         container._vnode = vnode
     }
 
+    // patch 流程
     const patch = (n1, n2, container, anchor = null, parentComponent = null, parentSuspense = null, isSVG = false, optimized = false) => {
         // 如果存在新旧节点, 且新旧节点类型不同，则销毁旧节点
         if (n1 && !isSameVNodeType(n1, n2)) {
@@ -240,6 +241,11 @@
         }
     }
 
+    function isSameVNodeType(n1, n2) {
+        // n1 和 n2 节点的 type 和 key 都相同，才是相同节点
+        return n1.type === n2.type && n1.key === n2.key
+    }
+
     const processComponent = (n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, optimized) => {
         if (n1 == null) {
             // 挂载组件
@@ -251,6 +257,90 @@
         }
     }
 
+    // 更新组件
+    const updateComponent = (n1, n2, parentComponent, optimized) => {
+        const instance = (n2.component = n1.component)
+        // 根据新旧子组件 vnode 判断是否需要更新子组件
+        if (shouldUpdateComponent(n1, n2, parentComponent, optimized)) {
+            // 新的子组件 vnode 赋值给 instance.next
+            instance.next = n2
+            // 子组件也可能因为数据变化被添加到更新队列里了，移除它们防止对一个子组件重复更新
+            invalidateJob(instance.update)
+            // 执行子组件的副作用渲染函数
+            instance.update()
+        }
+        else {
+            // 不需要更新，只复制属性
+            n2.component = n1.component
+            n2.el = n1.el
+        }
+    }
+
+    // 
+    export function shouldUpdateComponent(
+        prevVNode: VNode,
+        nextVNode: VNode,
+        optimized?: boolean
+    ): boolean {
+        const { props: prevProps, children: prevChildren } = prevVNode
+        const { props: nextProps, children: nextChildren, patchFlag } = nextVNode
+
+        // Parent component's render function was hot-updated. Since this may have
+        // caused the child component's slots content to have changed, we need to
+        // force the child to update as well.
+        if (__DEV__ && (prevChildren || nextChildren) && isHmrUpdating) {
+            return true
+        }
+
+        // force child update for runtime directive or transition on component vnode.
+        if (nextVNode.dirs || nextVNode.transition) {
+            return true
+        }
+
+        if (optimized && patchFlag > 0) {
+            if (patchFlag & PatchFlags.DYNAMIC_SLOTS) {
+                // slot content that references values that might have changed,
+                // e.g. in a v-for
+                return true
+            }
+            if (patchFlag & PatchFlags.FULL_PROPS) {
+                if (!prevProps) {
+                    return !!nextProps
+                }
+                // presence of this flag indicates props are always non-null
+                return hasPropsChanged(prevProps, nextProps!)
+            } else if (patchFlag & PatchFlags.PROPS) {
+                const dynamicProps = nextVNode.dynamicProps!
+                for (let i = 0; i < dynamicProps.length; i++) {
+                    const key = dynamicProps[i]
+                    if (nextProps![key] !== prevProps![key]) {
+                        return true
+                    }
+                }
+            }
+        } else {
+            // this path is only taken by manually written render functions
+            // so presence of any children leads to a forced update
+            if (prevChildren || nextChildren) {
+                if (!nextChildren || !(nextChildren as any).$stable) {
+                    return true
+                }
+            }
+            if (prevProps === nextProps) {
+                return false
+            }
+            if (!prevProps) {
+                return !!nextProps
+            }
+            if (!nextProps) {
+                return true
+            }
+            return hasPropsChanged(prevProps, nextProps)
+        }
+
+        return false
+    }
+
     const mountComponent = (initialVNode, container, anchor, parentComponent, parentSuspense, isSVG, optimized) => {
         // 创建组件实例
         const instance = (initialVNode.component = createComponentInstance(initialVNode, parentComponent, parentSuspense))
@@ -260,26 +350,401 @@
         setupRenderEffect(instance, initialVNode, container, anchor, parentSuspense, isSVG, optimized)
     }
 
+    function setupComponent(instance, isSSR = false) {
+        const { props, children, shapeFlag } = instance.vnode
+        // 判断是否是一个有状态的组件
+        const isStateful = shapeFlag & 4
+        // 初始化 props
+        initProps(instance, props, isStateful, isSSR)
+        // 初始化 插槽
+        initSlots(instance, children)
+        // 设置有状态的组件实例
+        const setupResult = isStateful
+            ? setupStatefulComponent(instance, isSSR)
+            : undefined
+        return setupResult
+    }
+
+
+    function setupStatefulComponent(instance, isSSR) {
+        const Component = instance.type
+        // 创建渲染代理的属性访问缓存
+        instance.accessCache = {}
+        // 创建渲染上下文代理
+        instance.proxy = new Proxy(instance.ctx, PublicInstanceProxyHandlers)
+        // 判断处理 setup 函数
+        const { setup } = Component
+        if (setup) {
+            // 如果 setup 函数带参数，则创建一个 setupContext
+            const setupContext = (instance.setupContext =
+                setup.length > 1 ? createSetupContext(instance) : null)
+            // 执行 setup 函数，获取结果
+            const setupResult = callWithErrorHandling(setup, instance, 0 /* SETUP_FUNCTION */, [instance.props, setupContext])
+            // 处理 setup 执行结果
+            handleSetupResult(instance, setupResult)
+        }
+        else {
+            // 完成组件实例设置
+            finishComponentSetup(instance)
+        }
+    }
+
+    function createSetter() {
+        return function set(target, key, value, receiver) {
+            const oldValue = target[key]
+            value = toRaw(value)
+            const hadKey = hasOwn(target, key)
+            const result = Reflect.set(target, key, value, receiver)
+            // 如果目标的原型链也是一个 proxy，通过 Reflect.set 修改原型链上的属性会再次触发 setter，这种情况下就没必要触发两次 trigger 了
+            if (target === toRaw(receiver)) {
+                if (!hadKey) {
+                    trigger(target, "add" /* ADD */, key, value)
+                }
+                else if (hasChanged(value, oldValue)) {
+                    trigger(target, "set" /* SET */, key, value, oldValue)
+                }
+            }
+            return result
+        }
+    }
+
+    const updateComponentPreRender = (instance, nextVNode, optimized) => {
+        // 新组件 vnode 的 component 属性指向组件实例
+        nextVNode.component = instance
+        // 旧组件 vnode 的 props 属性
+        const prevProps = instance.vnode.props
+        // 组件实例的 vnode 属性指向新的组件 vnode
+        instance.vnode = nextVNode
+        // 清空 next 属性，为了下一次重新渲染准备
+        instance.next = null
+        // 更新 props
+        updateProps(instance, nextVNode.props, prevProps, optimized)
+        // 更新 插槽
+        updateSlots(instance, nextVNode.children)
+    }
+
+    // 设置渲染的副作用，钩子函数
     const setupRenderEffect = (instance, initialVNode, container, anchor, parentSuspense, isSVG, optimized) => {
         // 创建响应式的副作用渲染函数
         instance.update = effect(function componentEffect() {
             if (!instance.isMounted) {
-                // 渲染组件生成子树 vnode
-                const subTree = (instance.subTree = renderComponentRoot(instance))
-                // 把子树 vnode 挂载到 container 中
-                patch(null, subTree, container, anchor, instance, parentSuspense, isSVG)
-                // 保留渲染生成的子树根 DOM 节点
-                initialVNode.el = subTree.el
-                instance.isMounted = true
+                // 渲染组件
             }
             else {
                 // 更新组件
+                let { next, vnode } = instance
+                // next 表示新的组件 vnode
+                if (next) {
+                    // 更新组件 vnode 节点信息
+                    updateComponentPreRender(instance, next, optimized)
+                }
+                else {
+                    next = vnode
+                }
+                // 渲染新的子树 vnode
+                const nextTree = renderComponentRoot(instance)
+                // 缓存旧的子树 vnode
+                const prevTree = instance.subTree
+                // 更新子树 vnode
+                instance.subTree = nextTree
+                // 组件更新核心逻辑，根据新旧子树 vnode 做 patch
+                patch(prevTree, nextTree,
+                    // 如果在 teleport 组件中父节点可能已经改变，所以容器直接找旧树 DOM 元素的父节点
+                    hostParentNode(prevTree.el),
+                    // 参考节点在 fragment 的情况可能改变，所以直接找旧树 DOM 元素的下一个节点
+                    getNextHostNode(prevTree),
+                    instance,
+                    parentSuspense,
+                    isSVG)
+                // 缓存更新后的 DOM 节点
+                next.el = nextTree.el
             }
         }, prodEffectOptions)
     }
 
 
 
+    const processElement = (n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, optimized) => {
+        isSVG = isSVG || n2.type === 'svg'
+        if (n1 == null) {
+            //挂载元素节点
+            mountElement(n2, container, anchor, parentComponent, parentSuspense, isSVG, optimized)
+        }
+        else {
+            //更新元素节点
+            patchElement(n1, n2, parentComponent, parentSuspense, isSVG, optimized)
+        }
+    }
+
+    const patchElement = (n1, n2, parentComponent, parentSuspense, isSVG, optimized) => {
+        const el = (n2.el = n1.el)
+        const oldProps = (n1 && n1.props) || EMPTY_OBJ
+        const newProps = n2.props || EMPTY_OBJ
+        // 更新 props
+        patchProps(el, n2, oldProps, newProps, parentComponent, parentSuspense, isSVG)
+        const areChildrenSVG = isSVG && n2.type !== 'foreignObject'
+        // 更新子节点
+        patchChildren(n1, n2, el, null, parentComponent, parentSuspense, areChildrenSVG)
+    }
+
+    const patchChildren = (n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, optimized = false) => {
+        const c1 = n1 && n1.children
+        const prevShapeFlag = n1 ? n1.shapeFlag : 0
+        const c2 = n2.children
+        const { shapeFlag } = n2
+        // 子节点有 3 种可能情况：文本、数组、空
+        if (shapeFlag & 8 /* TEXT_CHILDREN */) {
+            if (prevShapeFlag & 16 /* ARRAY_CHILDREN */) {
+                // 数组 -> 文本，则删除之前的子节点
+                unmountChildren(c1, parentComponent, parentSuspense)
+            }
+            if (c2 !== c1) {
+                // 文本对比不同，则替换为新文本
+                hostSetElementText(container, c2)
+            }
+        }
+        else {
+            if (prevShapeFlag & 16 /* ARRAY_CHILDREN */) {
+                // 之前的子节点是数组
+                if (shapeFlag & 16 /* ARRAY_CHILDREN */) {
+                    // 新的子节点仍然是数组，则做完整地 diff
+                    patchKeyedChildren(c1, c2, container, anchor, parentComponent, parentSuspense, isSVG, optimized)
+                }
+                else {
+                    // 数组 -> 空，则仅仅删除之前的子节点
+                    unmountChildren(c1, parentComponent, parentSuspense, true)
+                }
+            }
+            else {
+                // 之前的子节点是文本节点或者为空
+                // 新的子节点是数组或者为空
+                if (prevShapeFlag & 8 /* TEXT_CHILDREN */) {
+                    // 如果之前子节点是文本，则把它清空
+                    hostSetElementText(container, '')
+                }
+                if (shapeFlag & 16 /* ARRAY_CHILDREN */) {
+                    // 如果新的子节点是数组，则挂载新子节点
+                    mountChildren(c2, container, anchor, parentComponent, parentSuspense, isSVG, optimized)
+                }
+            }
+        }
+    }
+
+    // 去头尾的最长递增子序列算法 双端比较算法
+    const patchKeyedChildren = (c1, c2, container, parentAnchor, parentComponent, parentSuspense, isSVG, optimized) => {
+        let i = 0
+        const l2 = c2.length
+        // 旧子节点的尾部索引
+        let e1 = c1.length - 1
+        // 新子节点的尾部索引
+        let e2 = l2 - 1
+        // 1. 从头部开始同步
+        // i = 0, e1 = 7, e2 = 7
+        // (a b) c d e f g h
+        // (a b) e c d i g h
+        // 2. 从尾部开始同步
+        // i = 2, e1 = 7, e2 = 7
+        // (a b) c d e f (g h)
+        // (a b) e c d i (g h)
+        // 3. 普通序列挂载剩余的新节点，不满足
+        // 4. 普通序列删除多余的旧节点，不满足
+        // i = 2, e1 = 4, e2 = 5
+        // 旧子序列开始索引，从 i 开始记录
+        const s1 = i
+        // 新子序列开始索引，从 i 开始记录
+        const s2 = i
+        // 5.1 根据 key 建立新子序列的索引图
+        // 5.2 正序遍历旧子序列，找到匹配的节点更新，删除不在新子序列中的节点，判断是否有移动节点
+        // 新子序列已更新节点的数量
+        let patched = 0
+        // 新子序列待更新节点的数量，等于新子序列的长度
+        const toBePatched = e2 - s2 + 1
+        // 是否存在要移动的节点
+        let moved = false
+        // 用于跟踪判断是否有节点移动
+        let maxNewIndexSoFar = 0
+        // 这个数组存储新子序列中的元素在旧子序列节点的索引，用于确定最长递增子序列
+        const newIndexToOldIndexMap = new Array(toBePatched)
+        // 初始化数组，每个元素的值都是 0
+        // 0 是一个特殊的值，如果遍历完了仍有元素的值为 0，则说明这个新节点没有对应的旧节点
+        for (i = 0; i < toBePatched; i++)
+            newIndexToOldIndexMap[i] = 0
+        // 正序遍历旧子序列
+        for (i = s1; i <= e1; i++) {
+            // 拿到每一个旧子序列节点
+            const prevChild = c1[i]
+            if (patched >= toBePatched) {
+                // 所有新的子序列节点都已经更新，剩余的节点删除
+                unmount(prevChild, parentComponent, parentSuspense, true)
+                continue
+            }
+            // 查找旧子序列中的节点在新子序列中的索引
+            let newIndex = keyToNewIndexMap.get(prevChild.key)
+            if (newIndex === undefined) {
+                // 找不到说明旧子序列已经不存在于新子序列中，则删除该节点
+                unmount(prevChild, parentComponent, parentSuspense, true)
+            }
+            else {
+                // 更新新子序列中的元素在旧子序列中的索引，这里加 1 偏移，是为了避免 i 为 0 的特殊情况，影响对后续最长递增子序列的求解
+                newIndexToOldIndexMap[newIndex - s2] = i + 1
+                // maxNewIndexSoFar 始终存储的是上次求值的 newIndex，如果不是一直递增，则说明有移动
+                if (newIndex >= maxNewIndexSoFar) {
+                    maxNewIndexSoFar = newIndex
+                }
+                else {
+                    moved = true
+                }
+                // 更新新旧子序列中匹配的节点
+                patch(prevChild, c2[newIndex], container, null, parentComponent, parentSuspense, isSVG, optimized)
+                patched++
+            }
+        }
+    }
+
+    function createComponentInstance(vnode, parent, suspense) {
+        // 继承父组件实例上的 appContext，如果是根组件，则直接从根 vnode 中取。
+        const appContext = (parent ? parent.appContext : vnode.appContext) || emptyAppContext;
+        const instance = {
+            // 组件唯一 id
+            uid: uid++,
+            // 组件 vnode
+            vnode,
+            // 父组件实例
+            parent,
+            // app 上下文
+            appContext,
+            // vnode 节点类型
+            type: vnode.type,
+            // 根组件实例
+            root: null,
+            // 新的组件 vnode
+            next: null,
+            // 子节点 vnode
+            subTree: null,
+            // 带副作用更新函数
+            update: null,
+            // 渲染函数
+            render: null,
+            // 渲染上下文代理
+            proxy: null,
+            // 带有 with 区块的渲染上下文代理
+            withProxy: null,
+            // 响应式相关对象
+            effects: null,
+            // 依赖注入相关
+            provides: parent ? parent.provides : Object.create(appContext.provides),
+            // 渲染代理的属性访问缓存
+            accessCache: null,
+            // 渲染缓存
+            renderCache: [],
+            // 渲染上下文
+            ctx: EMPTY_OBJ,
+            // data 数据
+            data: EMPTY_OBJ,
+            // props 数据
+            props: EMPTY_OBJ,
+            // 普通属性
+            attrs: EMPTY_OBJ,
+            // 插槽相关
+            slots: EMPTY_OBJ,
+            // 组件或者 DOM 的 ref 引用
+            refs: EMPTY_OBJ,
+            // setup 函数返回的响应式结果
+            setupState: EMPTY_OBJ,
+            // setup 函数上下文数据
+            setupContext: null,
+            // 注册的组件
+            components: Object.create(appContext.components),
+            // 注册的指令
+            directives: Object.create(appContext.directives),
+            // suspense 相关
+            suspense,
+            // suspense 异步依赖
+            asyncDep: null,
+            // suspense 异步依赖是否都已处理
+            asyncResolved: false,
+            // 是否挂载
+            isMounted: false,
+            // 是否卸载
+            isUnmounted: false,
+            // 是否激活
+            isDeactivated: false,
+            // 生命周期，before create
+            bc: null,
+            // 生命周期，created
+            c: null,
+            // 生命周期，before mount
+            bm: null,
+            // 生命周期，mounted
+            m: null,
+            // 生命周期，before update
+            bu: null,
+            // 生命周期，updated
+            u: null,
+            // 生命周期，unmounted
+            um: null,
+            // 生命周期，before unmount
+            bum: null,
+            // 生命周期, deactivated
+            da: null,
+            // 生命周期 activated
+            a: null,
+            // 生命周期 render triggered
+            rtg: null,
+            // 生命周期 render tracked
+            rtc: null,
+            // 生命周期 error captured
+            ec: null,
+            // 派发事件方法
+            emit: null
+        }
+        // 初始化渲染上下文
+        instance.ctx = { _: instance }
+        // 初始化根组件指针
+        instance.root = parent ? parent.root : instance
+        // 初始化派发事件方法
+        instance.emit = emit.bind(null, instance)
+        return instance
+    }
+
+
+
+
+    const mountElement = (vnode, container, anchor, parentComponent, parentSuspense, isSVG, optimized) => {
+        let el
+        const { type, props, shapeFlag } = vnode
+        // 创建 DOM 元素节点
+        el = vnode.el = hostCreateElement(vnode.type, isSVG, props && props.is)
+        if (props) {
+            // 处理 props，比如 class、style、event 等属性
+            for (const key in props) {
+                if (!isReservedProp(key)) {
+                    hostPatchProp(el, key, null, props[key], isSVG)
+                }
+            }
+        }
+        if (shapeFlag & 8 /* TEXT_CHILDREN */) {
+            // 处理子节点是纯文本的情况
+            hostSetElementText(el, vnode.children)
+        }
+        else if (shapeFlag & 16 /* ARRAY_CHILDREN */) {
+            // 处理子节点是数组的情况
+            mountChildren(vnode.children, el, null, parentComponent, parentSuspense, isSVG && type !== 'foreignObject', optimized || !!vnode.dynamicChildren)
+        }
+        // 把创建的 DOM 元素节点挂载到 container 上
+        hostInsert(el, container, anchor)
+    }
+
+    //  创建元素
+    function createElement(tag, isSVG, is) {
+        isSVG ? document.createElementNS(svgNS, tag)
+            : document.createElement(tag, is ? { is } : undefined)
+    }
+
+    // 设置元素文本内容
+    function setElementText(el, text) {
+        el.textContent = text
+    }
 
     // 创建一个空节点
     function createEmptyVNode() {
@@ -291,6 +756,30 @@
     // 创建一个文本节点
     function createTextVNode(val) {
         return new VNode(undefined, undefined, undefined, String(val));
+    }
+
+    // 挂载子元素节点
+    const mountChildren = (children, container, anchor, parentComponent, parentSuspense, isSVG, optimized, start = 0) => {
+        for (let i = start; i < children.length; i++) {
+            // 预处理 child
+            const child = (children[i] = optimized
+                ? cloneIfMounted(children[i])
+                : normalizeVNode(children[i]))
+            // 递归 patch 挂载 child
+            patch(null, child, container, anchor, parentComponent, parentSuspense, isSVG, optimized)
+        }
+    }
+
+    // 这里会做一个 if 判断，如果有参考元素 anchor，就执行 parent.insertBefore ，否则执行 parent.appendChild 来把 child 添加到 parent 下，完成节点的挂载。
+    // 因为 insert 的执行是在处理子节点后，所以挂载的顺序是先子节点，后父节点，最终挂载到最外层的容器上。
+
+    function insert(child, parent, anchor) {
+        if (anchor) {
+            parent.insertBefore(child, anchor)
+        }
+        else {
+            parent.appendChild(child)
+        }
     }
 
     // 克隆一个VNode节点
