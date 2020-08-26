@@ -463,6 +463,29 @@
     }
 
 
+    function baseCompile(template, options = {}) {
+        const prefixIdentifiers = false
+        // 解析 template 生成 AST 
+        const ast = isString(template) ? baseParse(template, options) : template
+        const [nodeTransforms, directiveTransforms] = getBaseTransformPreset()
+        // AST 转换 
+        transform(ast, extend({}, options, {
+            prefixIdentifiers,
+            nodeTransforms: [
+                ...nodeTransforms,
+                ...(options.nodeTransforms || [])
+            ],
+            directiveTransforms: extend({}, directiveTransforms, options.directiveTransforms || {}
+            )
+        }))
+        // 生成代码 
+        return generate(ast, extend({}, options, {
+            prefixIdentifiers
+        }))
+    }
+
+
+
 
     const processElement = (n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, optimized) => {
         isSVG = isSVG || n2.type === 'svg'

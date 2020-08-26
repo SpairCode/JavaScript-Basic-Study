@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script type="text/javascript">
+    let obj = {
+        name
+    }
+
+    // function Person(name, age, sex) {
+    //     this.name = name;
+    //     this.age = age;
+    //     this.sex = sex;
+    //     this.say = function () {
+    //         alert(this.name)
+    //     }
+    // }
+
+    function Person() {}
+    Person.prototype.name = "Nicholas";
+    Person.prototype.age = 29;
+    Person.prototype.job = "Software Engineer";
+    Person.prototype.sayName = function () {
+        alert(this.name);
+    }
+
+    function createPerson(name, age, sex) {
+        let o = new Object();
+        o.name = name;
+        o.age = age;
+        o.sex = sex;
+        o.sayName = function () {
+            alert(this.name);
+        };
+        return o;
+    }
+
+    let people = new Person('Fan', 20, 'man')
+    let person = new createPerson('Fan', 20, 'man')
+
+    console.log(Person.prototype.isPrototypeOf(people))
+    console.log(createPerson.prototype.isPrototypeOf(person))
+
+    delete person.name
+
+    console.log(person.hasOwnProperty("name"))
+</script>
+
+</html>
