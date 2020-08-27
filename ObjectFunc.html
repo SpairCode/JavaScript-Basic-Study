@@ -24,12 +24,27 @@
     //     }
     // }
 
-    function Person() {}
-    Person.prototype.name = "Nicholas";
-    Person.prototype.age = 29;
-    Person.prototype.job = "Software Engineer";
-    Person.prototype.sayName = function () {
-        alert(this.name);
+    // function Person() {}
+
+    // Person.prototype.name = "Nicholas";
+    // Person.prototype.age = 29;
+    // Person.prototype.job = "Software Engineer";
+    // Person.prototype.sayName = function () {
+    //     alert(this.name);
+    // }
+
+    function Person(name, age, job) {
+        this.name = name;
+        this.age = age;
+        this.job = job;
+        this.friends = ["Shelby", "Court"];
+    }
+    
+    Person.prototype = {
+        constructor: Person,
+        sayName: function () {
+            alert(this.name);
+        }
     }
 
     function createPerson(name, age, sex) {
