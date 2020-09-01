@@ -67,6 +67,14 @@
     delete person.name
 
     console.log(person.hasOwnProperty("name"))
+
+    function queryBook (month) {
+        if (month <= 1) {
+            return 1
+        } else {
+            return month + queryBook(month - 1)
+        }
+    }
 </script>
 
 </html>
