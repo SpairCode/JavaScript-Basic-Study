@@ -39,7 +39,7 @@
         this.job = job;
         this.friends = ["Shelby", "Court"];
     }
-    
+
     Person.prototype = {
         constructor: Person,
         sayName: function () {
@@ -68,13 +68,20 @@
 
     console.log(person.hasOwnProperty("name"))
 
-    function queryBook (month) {
+    function queryBook(month) {
         if (month <= 1) {
             return 1
         } else {
             return month + queryBook(month - 1)
         }
     }
+
+    const target = { a: 1, b: 2 };
+    const source = { b: 4, c: 5 };
+    const returnedTarget = Object.assign(target, source);
+
+    console.log(target);
+    console.log(returnedTarget);
 </script>
 
 </html>
