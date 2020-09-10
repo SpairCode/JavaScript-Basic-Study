@@ -1,23 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
 
 </body>
 <script type="text/javascript">
-let arrayLike = {
-    '0' : 'a',
-    '1' : 'b',
-    '2' : 'c',
-    length: 3
-}
+    // Array
+    let arrayLike = {
+        '0': 'a',
+        '1': 'b',
+        '2': 'c',
+        length: 3
+    }
 
-Array.of(3, 4, 5)
+    let nameSet = new Set(['a', 'b'])
 
-console.log(Array.from(arrayLike))
+    Array.of(3, 4, 5)
+
+    Array.from([1, 2, 3], (x) => x * x)
+
+    console.log(Array.from(arrayLike))
+
+    let arr = [3, 9, 20, null, null, 15, 7]
+
+    let target = { a : 1 }, source = { b : 2 }
+
+    let targets = { c : 3 }
+
+    Object.assign(targets, target, source)
+
+    console.log(targets)
+
+    let proxy = new Proxy({}, {
+        get: function (target, key, val) {
+            console.log('Get target', target)
+            console.log('Get key', key)
+            return Reflect.get(target, key, val)
+        },
+        set: function (target, key, val) {
+            console.log('Set target', target)
+            console.log('Set key', key)
+            return Reflect.set(target, key, val)
+        }
+    })
 </script>
+
 </html>
