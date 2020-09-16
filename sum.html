@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script type="text/javascript">
+arrs = []
+
+function nums(x, y, z) {
+    for(var i  = 1; i <= 200/ x; i++) {
+        for(var j = 1; j <= 200 / y; j++) {
+            for(var k = 1; k <= 200 / z; k++) {
+                if (x * i + j * y + k * z === 200 ) {
+                    arrs.push([i, j, k])
+                }
+            }
+        }
+    }
+    goods(arrs)
+}
+
+
+function goods(...arr) {
+    arrs.map((x) => {
+        if(x[0] * 1 + x[1] * 1 + x[2] * 3 === 200) {
+            console.log(x)
+        }
+    })
+}
+</script>
+</html>
