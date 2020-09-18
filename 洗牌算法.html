@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> shuffle </title>
+</head>
+
+<body>
+
+</body>
+<script>
+    function shuffle(array) {
+        let current = array.length - 1;
+        while (current > -1) {
+            // 生成一个范围在当前下标到数组末尾元素下标之间的随机整数
+            const random = Math.floor(array.length * Math.random());
+            // 将当前元素和随机选出的下标所指的元素互相交换 
+            [array[current], array[random]] = [array[random], array[current]];
+            current--;
+        }
+        return array;
+    };
+
+    array = Array.from(Array(10).keys())
+    arrays = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
+    const curry = (fn, ...args) =>
+      args.length >= fn.length
+      ? fn(...args)
+      : (..._args) => curry(fn, ...args, ..._args)
+
+    function adds (x, y, z) {
+        return x + y + z
+    }
+
+    const add = curry(adds);
+
+    // chunk
+</script>
+
+</html>
