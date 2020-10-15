@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <audio id="audio" src="https://ws.stream.qqmusic.qq.com/C400003kbz9D1pntqv.m4a?guid=592048000&vkey=262EB6C872FDD5EA5B9151F4DD3DA85E45581E1EE2F298644FEC54C1F29D99D572453EE468B713B764F797CD22407490ADE4FA7977189E33&uin=0&fromtag=66"></audio>
+</body>
+<script>
+    function fetchData() {
+        fetch('http://192.168.10.249:8080/v1/user/', {
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            // credentials: 'same-origin', // include, same-origin, *omit
+            headers: {
+                'content-type': 'application/json'
+            },
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors',
+        }
+        ).then((res) => {
+            console.log(res)
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+
+    // fetchData()
+
+    let audio = document.getElementById('audio')
+    audio.play()
+</script>
+
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Table </title>
+</head>
+<style type="text/css">
+* {
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+
+table, th, td {
+    padding: 5px;
+    border: 1px solid black;
+}
+</style>
+<body>
+    <div>
+        <table>
+            <thead align="center">
+                <tr>
+                    <th>序号</th>
+                    <th>类型</th>
+                    <th>内容</th>
+                    <th>投诉举报对象</th>
+                    <th>整改时限（工作日）</th>
+                    <th>级别</th>
+                    <th>处置依据</th>
+                    <th>记分</th>
+                </tr>
+            </thead>
+            <tbody align="center">
+                <tr>
+                    <td>1</td>
+                    <td rowspan="5">未获得备案和许可</td>
+                    <td>单位未获得特定业务的经营许可资质。</td>
+                    <td rowspan="3">教育App提供者</td>
+                    <td>下线整改</td>
+                    <td>1</td>
+                    <td>《网络出版服务管理规定》《互联网新闻信息服务管理规定》等</td>
+                    <td>12分</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>未完成ICP备案和网络安全等级保护备案</td>
+                    <td>立即整改</td>
+                    <td>2</td>
+                    <td>《网络安全法》</td>
+                    <td>6分</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>未获得教育App提供者备案</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td>《教育移动互联网应用程序备案管理办法》</td>
+                    <td>3分</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>未获得教育App使用者备案</td>
+                    <td>教育App使用者</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td>《教育移动互联网应用程序备案管理办法》</td>
+                    <td>3分</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>开展中小学学科类校外线上培训活动的机构未进行校外线上培训机构备案</td>
+                    <td>教育App提供者</td>
+                    <td>-</td>
+                    <td>3</td>
+                    <td>《教育部等六部门关于规范校外线上培训的实施意见》</td>
+                    <td>3分</td>
+                </tr>
+            </tbody>
+            <tbody align="center">
+                <tr>
+                    <td>6</td>
+                    <td rowspan="5">存在违法违规和不良信息</td>
+                    <td>存在违法违规和不良信息，不适合未成年人信息，并造成恶劣的社会影响。</td>
+                    <td rowspan="5">教育App提供者</td>
+                    <td>下线整改</td>
+                    <td>1</td>
+                    <td>《教育移动互联网应用程序备案管理办法》《互联网信息服务管理办法》</td>
+                    <td>12分</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>政治类、暴恐类、诈骗类、色情类、低俗类、赌博类、侵权类、谣言类等违法违规信息</td>
+                    <td>立即整改</td>
+                    <td>2</td>
+                    <td>《互联网信息服务管理办法》</td>
+                    <td>6分</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>不适合未成年人的信息</td>
+                    <td>立即整改</td>
+                    <td>2</td>
+                    <td>《未成年人保护法》《广告法》</td>
+                    <td>6分</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>不当宣传：标题党、贩卖焦虑、输出不正确的价值观</td>
+                    <td>15</td>
+                    <td>4</td>
+                    <td>无</td>
+                    <td>1分</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>广告泛滥，广告与提供服务的内容无关</td>
+                    <td>15</td>
+                    <td>4</td>
+                    <td>无</td>
+                    <td>1分</td>
+                </tr>
+            </tbody>
+            <tbody align="center">
+                <tr>
+                    <td>11</td>
+                    <td rowspan="5">违法违规采集或不合理应用个人信息</td>
+                    <td>大规模（超过100万）的个人信息违法违规收集使用或数据安全事件</td>
+                    <td rowspan="5">教育App提供者</td>
+                    <td>下线整改</td>
+                    <td>1</td>
+                    <td>《教育移动互联网应用程序备案管理办法》《网络安全法》</td>
+                    <td>12分</td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td>违法违规收集使用个人信息</td>
+                    <td>立即整改</td>
+                    <td>2</td>
+                    <td>《App违法违规收集使用个人信息行为认定方法》</td>
+                    <td>6分</td>
+                </tr>
+            </tbody>
+            <tbody align="center">
+                <tr>
+                    <td>13</td>
+                    <td rowspan="5">违法违规采集或不合理应用个人信息</td>
+                    <td>未落实注册用户实名身份信息认证制度</td>
+                    <td rowspan="5">教育App提供者</td>
+                    <td>立即整改</td>
+                    <td>2</td>
+                    <td>《移动互联网应用程序信息服务管理规定》</td>
+                    <td>6分</td>
+                </tr>
+                <tr>
+                    <td>14</td>
+                    <td>100万以下的数据泄露、数据丢失、数据损坏等数据安全事件</td>
+                    <td>立即整改</td>
+                    <td>2</td>
+                    <td>《国家网络安全事件应急预案》</td>
+                    <td>6分</td>
+                </tr>
+                <tr>
+                    <td>15</td>
+                    <td>骚扰电话、垃圾短信</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td>《综合整治骚扰电话专项行动方案》</td>
+                    <td>3分</td>
+                </tr>
+                <tr>
+                    <td>16</td>
+                    <td>不合理收集使用个人信息行为：如超应用需求采集信息</td>
+                    <td>15</td>
+                    <td>4</td>
+                    <td>无</td>
+                    <td>1分</td>
+                </tr>
+            </tbody>
+            <tbody align="center">
+                <tr>
+                    <td>17</td>
+                    <td rowspan="5">违反教育App进校要求</td>
+                    <td>要求统一使用的教育App存在商业广告和游戏；推荐使用的教育App与教学管理行为绑定</td>
+                    <td rowspan="5">教育App使用者</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td rowspan="5">《教育部等八部门关于引导规范教育移动互联网应用有序健康发展的意见》</td>
+                    <td>3分</td>
+                </tr>
+                <tr>
+                    <td>18</td>
+                    <td>使用的教育App存在市场垄断或不合理市场竞争</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td>3分</td>
+                </tr>
+                <tr>
+                    <td>19</td>
+                    <td>学校要求统一使用的教育App未征求老师、家长、学生意见</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td>3分</td>
+                </tr>
+                <tr>
+                    <td>20</td>
+                    <td>学校使用教育App缺乏统筹规划，造成教育App泛滥</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td>3分</td>
+                </tr>
+            </tbody>
+            <tbody align="center">
+                <tr>
+                    <td>21</td>
+                    <td rowspan="5">违反中小学生学科类校外线上培训要求</td>
+                    <td>内容未体现素质教育导向，培训内容超出相应的国家课程标准</td>
+                    <td rowspan="5">教育App提供者</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td rowspan="5">《教育部等六部门关于规范校外线上培训的实施意见》</td>
+                    <td>3分</td>
+                </tr>
+                <tr>
+                    <td>22</td>
+                    <td>每节课课程培训时长超过40分钟。直播类培训活动结束时间晚于21:00。</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td>3分</td>
+                </tr>
+                <tr>
+                    <td>23</td>
+                    <td>从事学科知识培训的人员应当具有国家规定未获得教师资格</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td>3分</td>
+                </tr>
+                <tr>
+                    <td>24</td>
+                    <td>一次性收取超过60课时或3个月以上的费用</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td>3分</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

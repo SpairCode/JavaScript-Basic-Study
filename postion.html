@@ -1,72 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title> 平凡之路 </title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title> 平凡之路 </title>
 </head>
 <style type="text/css">
-@font-face {
+  @font-face {
     font-family: 'KH';
     src: url('./font/FZZJ-LongYTJW.ttf');
-}
+  }
 
-@keyframes tracking-in-contract-bck-bottom {
-  0% {
-    letter-spacing: 1em;
-    -webkit-transform: translateZ(400px) translateY(300px);
-            transform: translateZ(400px) translateY(300px);
-    opacity: 0;
-  }
-  40% {
-    opacity: 0.6;
-  }
-  100% {
-    -webkit-transform: translateZ(0) translateY(0);
-            transform: translateZ(0) translateY(0);
-    opacity: 1;
-  }
-}
+  @keyframes tracking-in-contract-bck-bottom {
+    0% {
+      letter-spacing: 1em;
+      -webkit-transform: translateZ(400px) translateY(300px);
+      transform: translateZ(400px) translateY(300px);
+      opacity: 0;
+    }
 
-* { margin: 0; padding: 0; }
-html,body { width: 100%; height: 100%; font-family: 'KH';}
-.contentBox { width: 100%; }
-.setFont { width: 200px; height: 200px; font-size: 60px; text-align: center; line-height: 200px; }
-.relative { position: relative; top: 30px; left: 30px; background-color: #f5f5dcb0; }
-.absolute { position: absolute; top: 30px; left: 30px; background-color: rgba(255, 228, 196, .4); }
-.fixed { position: fixed; top: 300px; left: 300px; background-color: #deb8877a; }
-/* sticky生效的前提是，必须搭配top、bottom、left、right这四个属性一起使用，不能省略，否则等同于relative定位，不产生"动态固定"的效果。
+    40% {
+      opacity: 0.6;
+    }
+
+    100% {
+      -webkit-transform: translateZ(0) translateY(0);
+      transform: translateZ(0) translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes text-pop-up-top {
+    0% {
+      -webkit-transform: translateY(0);
+      transform: translateY(0);
+      -webkit-transform-origin: 50% 50%;
+      transform-origin: 50% 50%;
+      text-shadow: none;
+    }
+
+    100% {
+      -webkit-transform: translateY(-50px);
+      transform: translateY(-50px);
+      -webkit-transform-origin: 50% 50%;
+      transform-origin: 50% 50%;
+      text-shadow: 0 1px 0 #cccccc, 0 2px 0 #cccccc, 0 3px 0 #cccccc, 0 4px 0 #cccccc, 0 5px 0 #cccccc, 0 6px 0 #cccccc, 0 7px 0 #cccccc, 0 8px 0 #cccccc, 0 9px 0 #cccccc, 0 50px 30px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    font-family: 'KH';
+  }
+
+  .contentBox {
+    width: 100%;
+  }
+
+  .setFont {
+    width: 200px;
+    height: 200px;
+    font-size: 60px;
+    text-align: center;
+    line-height: 200px;
+  }
+
+  .relative {
+    position: relative;
+    top: 30px;
+    left: 30px;
+    background-color: #f5f5dcb0;
+  }
+
+  .absolute {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    background-color: rgba(255, 228, 196, .4);
+  }
+
+  .fixed {
+    position: fixed;
+    top: 300px;
+    left: 300px;
+    background-color: #deb8877a;
+  }
+
+  /* sticky生效的前提是，必须搭配top、bottom、left、right这四个属性一起使用，不能省略，否则等同于relative定位，不产生"动态固定"的效果。
 原因是这四个属性用来定义"偏移距离"，浏览器把它当作sticky的生效门槛。
 它的具体规则是，当页面滚动，父元素开始脱离视口时（即部分不可见），
 只要与sticky元素的距离达到生效门槛，
 relative定位自动切换为fixed定位；
 等到父元素完全脱离视口时（即完全不可见），
 fixed定位自动切换回relative定位 */
-.sticky { position: sticky; top: 0px; width: 100%; background-color: #a9a9a9bf; transition: all .8s; }
-.headText { width: 100%; height: 200px; text-align: center; line-height: 200px; font-size: 60px; background-color: #faebd7d1; }
-.contentText { position: sticky; top: 200px; width: 100%; height: 500px; text-align: center; line-height: 500px; font-size: 60px; background-color: #faebd7d1; }
-.footerText { position: sticky; top: 700px; width: 100%; height: 200px; text-align: center; line-height: 200px; font-size: 60px; background-color: #d9900ad1; }
+  .sticky {
+    position: sticky;
+    top: 0px;
+    width: 100%;
+    background-color: #f6f6f6;
+    transition: all .8s;
+    animation: text-pop-up-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  }
+
+  .headText {
+    width: 100%;
+    height: 200px;
+    text-align: center;
+    line-height: 200px;
+    font-size: 60px;
+    background-color: #faebd7d1;
+    animation: text-pop-up-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  }
+
+  .contentText {
+    position: sticky;
+    top: 200px;
+    width: 100%;
+    height: 500px;
+    text-align: center;
+    line-height: 500px;
+    font-size: 60px;
+    background-color: #ffe2e2;
+    animation: text-pop-up-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  }
+
+  .footerText {
+    position: sticky;
+    top: 700px;
+    width: 100%;
+    height: 200px;
+    text-align: center;
+    line-height: 200px;
+    font-size: 60px;
+    background-color: #aaaaaa;
+    animation: text-pop-up-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  }
 </style>
+
 <body>
+  <!-- 所以暂时将你眼睛闭了起来
+  黑暗之中漂浮我的期待
+  平静脸孔映着缤纷色彩
+  让人好不疼爱
+  你可以随着我的步伐
+  轻轻柔柔的踩
+  将美丽的回忆慢慢重来
+  突然之间浪漫无法释怀
+  明天我要离开
+  你给的爱
+  无助的等待
+  是否我一个人走
+  想听见你的挽留
+  春风秋雨 飘飘落落 只为寂寞
+  你给的爱
+  甜美的伤害
+  深深的锁住了我
+  隐藏不住的脆弱
+  泛滥河水将我冲向你的心头
+  不停流 -->
   <div class="contentBox">
-    <div class="sticky setFont"> 平凡之路 </div>
-    <div class="headText"> 朴树 </div>
-    <div class="contentText"> 我曾经跨过山和大海 </div>
-    <div class="contentText"> 也穿过人山人海 </div>
-    <div class="contentText"> 我曾经拥有着一切 </div>
-    <div class="contentText"> 转眼都飘散如烟 </div>
-    <div class="contentText"> 我曾经失落失望失掉所有方向 </div>
-    <div class="contentText"> 直到看见平凡才是唯一的答案 </div>
-    <div class="contentText"> - </div>
-    <div class="contentText"> 我不过像你像他像那野草野花 </div>
-    <div class="contentText"> 冥冥中这是我 唯一要走的路啊 </div>
-    <div class="contentText"> 时间无言 如此这般</div>
-    <div class="contentText"> 风吹过的 路依然远 </div>
-    <div class="contentText"> 你的故事讲到了哪 </div>
-    <div class="footerText"> 出走半生，归来少年 </div>
+    <div class="sticky setFont"> Last Dance </div>
+    <div class="headText"> 伍佰 </div>
+    <div class="contentText"> 所以暂时将你眼睛闭了起来 </div>
+    <div class="contentText"> 黑暗之中漂浮我的期待 </div>
+    <div class="contentText"> 平静脸孔映着缤纷色彩 </div>
+    <div class="contentText"> 让人好不疼爱 </div>
+    <div class="contentText"> 你可以随着我的步伐 </div>
+    <div class="contentText"> 轻轻柔柔的踩 </div>
+    <div class="contentText"> 将美丽的回忆慢慢重来 </div>
+    <div class="contentText"> 突然之间浪漫无法释怀 </div>
+    <div class="contentText"> 明天我要离开 </div>
+    <div class="contentText"> 你给的爱 </div>
+    <div class="contentText"> 甜美的伤害 </div>
+    <div class="contentText"> 深深的锁住了我 </div>
+    <div class="contentText"> 隐藏不住的脆弱 </div>
+    <div class="contentText"> 泛滥河水将我冲向你的心头 </div>
+    <div class="footerText"> 不停流 </div>
     <!-- <div class="relative setFont"> relative <div class="absolute setFont"> absolute </div></div> -->
     <!-- <div class="fixed setFont"> fixed </div> -->
   </div>
 </body>
+
 </html>
